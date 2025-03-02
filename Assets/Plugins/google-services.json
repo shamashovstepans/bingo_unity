@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "64456460203",
+    "firebase_url": "https://bingo-ac2e0-default-rtdb.europe-west1.firebasedatabase.app",
+    "project_id": "bingo-ac2e0",
+    "storage_bucket": "bingo-ac2e0.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:64456460203:android:da4dcdbd77349e278334ee",
+        "android_client_info": {
+          "package_name": "com.HeliumLight.Bingo"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "64456460203-lfpps1oo1929pv8rs9359lij9kc0neqo.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBjRE76azx0VP0NTWmDTrxySbPP8ghJ9o0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "64456460203-lfpps1oo1929pv8rs9359lij9kc0neqo.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "64456460203-hea2iuupvavab7b3rjk32ucs3j7rs5ar.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.HeliumLight.Bingo"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
