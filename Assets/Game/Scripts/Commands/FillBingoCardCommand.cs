@@ -7,7 +7,7 @@ namespace BingoGame.Commands
     {
         private readonly BingoCardsConfigProvider _configProvider;
 
-        private Random _random = new();
+        private readonly Random _random = new(10);
 
         public FillBingoCardCommand(BingoCardsConfigProvider configProvider)
         {

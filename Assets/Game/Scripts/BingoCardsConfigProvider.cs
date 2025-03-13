@@ -28,6 +28,7 @@ namespace BingoGame
 
         public void LoadConfig(string id)
         {
+            return;
             var url = "https://bingo-game-bucket-stepans.s3.eu-central-1.amazonaws.com/bingoCardConfig.json";
             var json = DownloadJsonFromUrl(url);
         }
