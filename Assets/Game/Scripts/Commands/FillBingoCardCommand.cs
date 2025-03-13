@@ -5,8 +5,9 @@ namespace BingoGame.Commands
 {
     internal class FillBingoCardCommand
     {
-        private Random _random = new();
         private readonly BingoCardsConfigProvider _configProvider;
+
+        private Random _random = new();
 
         public FillBingoCardCommand(BingoCardsConfigProvider configProvider)
         {
@@ -55,7 +56,7 @@ namespace BingoGame.Commands
                 int j = _random.Next(i + 1); // Random index from 0 to i
                 (list[i], list[j]) = (list[j], list[i]); // Swap elements
             }
-            
+
             return list;
         }
     }

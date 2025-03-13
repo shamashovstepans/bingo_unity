@@ -25,7 +25,7 @@ namespace BingoGame
         private void OnEnable()
         {
             _cancellationTokenSource = new CancellationTokenSource();
-            _configProvider = new BingoCardsConfigProvider();
+            _configProvider = new BingoCardsConfigProvider(this);
             _fillBingoCardCommand = new FillBingoCardCommand(_configProvider);
             _calculateBingoCommand = new CalculateBingoCommand();
             _initializeCardViewCommand = new InitializeCardViewCommand(_cardView);
@@ -50,6 +50,7 @@ namespace BingoGame
 
         private void OnRestartButtonClicked()
         {
+            _configProvider.LoadConfig("eag");
             Taptic.Light();
             _cardView.Dispose();
             _cancellationTokenSource.Cancel();
