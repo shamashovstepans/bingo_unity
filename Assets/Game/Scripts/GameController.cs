@@ -1,11 +1,6 @@
-using System;
 using System.Threading;
 using BingoGame.Commands;
-// using BingoGame.Dto;
 using Cysharp.Threading.Tasks;
-// using Firebase;
-// using Firebase.Extensions;
-// using Firebase.Firestore;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -27,8 +22,6 @@ namespace BingoGame
 
         private UniTaskCompletionSource<Vector2Int> _userInputCompletionSource;
 
-        // private FirebaseApp app;
-
         private void OnEnable()
         {
             _cancellationTokenSource = new CancellationTokenSource();
@@ -43,27 +36,6 @@ namespace BingoGame
             _cardView.OnCellClicked += OnCellClicked;
 
             GameLoopAsync(_cancellationTokenSource.Token).Forget();
-
-            // FirebaseApp.CheckAndFixDependenciesAsync().ContinueWithOnMainThread<DependencyStatus>(task =>
-            // {
-            //     var dependencyStatus = task.Result;
-            //     if (dependencyStatus == DependencyStatus.Available)
-            //     {
-            //     }
-            //     else
-            //     {
-            //         Debug.LogError(String.Format(
-            //             "Could not resolve all Firebase dependencies: {0}", dependencyStatus));
-            //         // Firebase Unity SDK is not safe to use here.
-            //     }
-            // });
-            
-            // var db = FirebaseFirestore.DefaultInstance;
-            // var episodeReference = db.Collection("games_history").Document("episode_1");
-            // episodeReference.Listen(snapshot =>
-            // {
-            //     Debug.LogError($"CHANGED {snapshot.Id}");
-            // });
         }
 
         private void OnDisable()
@@ -76,77 +48,8 @@ namespace BingoGame
             _cancellationTokenSource = null;
         }
 
-        private async void Update()
+        private void OnRestartButtonClicked()
         {
-            // if (Input.GetKeyDown(KeyCode.Space))
-            // {
-            //     var db = FirebaseFirestore.DefaultInstance;
-            //     var episodeReference = db.Collection("games_history").Document("episode_1");
-            //     var episodeData = new EpisodeData()
-            //     {
-            //         Name = "polanushka",
-            //         Link = "https://www.youtube.com/watch?v=3QHsP9m3G0k"
-            //     };
-            //     try
-            //     {
-            //         await episodeReference.SetAsync(episodeData);
-            //     }
-            //     catch (Exception e)
-            //     {
-            //         Debug.LogError(e);
-            //     }
-            // }
-            //
-            // if (Input.GetKeyDown(KeyCode.R))
-            // {
-            //     var db = FirebaseFirestore.DefaultInstance;
-            //     var episodeReference = db.Collection("games_history").Document("episode_1");
-            //     episodeReference.GetSnapshotAsync().ContinueWithOnMainThread(task =>
-            //     {
-            //         try
-            //         {
-            //             if (task.IsFaulted)
-            //             {
-            //                 Debug.LogError(task.Exception);
-            //                 return;
-            //             }
-            //
-            //             DocumentSnapshot snapshot = task.Result;
-            //             Debug.Log($"Id: {snapshot.Id}");
-            //             var dictionary = snapshot.ToDictionary();
-            //
-            //             foreach (var o in dictionary)
-            //             {
-            //                 Debug.Log($"{o.Key} : {o.Value}");
-            //             }
-            //         }
-            //         catch (Exception e)
-            //         {
-            //             Debug.LogError(e);
-            //         }
-            //
-            //
-            //     });
-            // }
-        }
-
-        private async void OnRestartButtonClicked()
-        {
-            // var db = FirebaseFirestore.DefaultInstance;
-            // var episodeReference = db.Collection("games_history").Document("episode_2");
-            // var episodeData = new EpisodeData()
-            // {
-            //     Name = "nyamka",
-            //     Link = "https://www.youtube.com/watch?v=3QHsP9m3G0k"
-            // };
-            // try
-            // {
-            //     await episodeReference.SetAsync(episodeData);
-            // }
-            // catch (Exception e)
-            // {
-            //     Debug.LogError(e);
-            // }
             Taptic.Light();
             _cardView.Dispose();
             _cancellationTokenSource.Cancel();
