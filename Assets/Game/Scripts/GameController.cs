@@ -1,5 +1,6 @@
 using System.Threading;
 using BingoGame.Commands;
+using BingoGame.Services;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.UI;
@@ -56,6 +57,9 @@ namespace BingoGame
             _cancellationTokenSource.Dispose();
             _cancellationTokenSource = new CancellationTokenSource();
             GameLoopAsync(_cancellationTokenSource.Token).Forget();
+            
+            var supabaseConnection = new SupabaseConnection();
+            supabaseConnection.ConnectAsync(_cancellationTokenSource.Token).Forget(Debug.LogError);
         }
 
         private async UniTaskVoid GameLoopAsync(CancellationToken token)
