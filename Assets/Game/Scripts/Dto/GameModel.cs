@@ -1,15 +1,16 @@
 using Postgrest.Attributes;
+using Postgrest.Models;
 
 namespace BingoGame.Dto
 {
     [Table("games")]
-    internal class GameModel
+    public class GameModel : BaseModel
     {
         [PrimaryKey("id", false)]
         public int Id { get; set; }
         
         [Column("seed")]
-        public int Seed { get; set; }
+        public short Seed { get; set; }
         
         [Column("episode_id")]
         public long EpisodeId { get; set; }
@@ -21,6 +22,6 @@ namespace BingoGame.Dto
         public bool IsWinner { get; set; }
         
         [Column("matches")]
-        public int Matches { get; set; }
+        public string Matches { get; set; }
     }
 }

@@ -1,7 +1,9 @@
 using System.Threading;
 using BingoGame.Commands;
+using BingoGame.Dto;
 using BingoGame.Services;
 using Cysharp.Threading.Tasks;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -11,6 +13,10 @@ namespace BingoGame
     {
         [SerializeField] private BingoCardView _cardView;
         [SerializeField] private Button _restartButton;
+        
+        [SerializeField] private TextMeshProUGUI _episodeText;
+
+        [SerializeField] private Button _sendButton;
 
         private BingoCardsConfigProvider _configProvider;
 
@@ -22,6 +28,10 @@ namespace BingoGame
         private CancellationTokenSource _cancellationTokenSource;
 
         private UniTaskCompletionSource<Vector2Int> _userInputCompletionSource;
+
+        private short _seed;
+
+        private BingoGameState _gameState;
 
         private void OnEnable()
         {
@@ -37,6 +47,12 @@ namespace BingoGame
             _cardView.OnCellClicked += OnCellClicked;
 
             GameLoopAsync(_cancellationTokenSource.Token).Forget();
+
+            _episodeText.text = SupabaseService.CurrentEpisode.Name;
+            
+            _sendButton.onClick.AddListener(OnSendButtonClicked);
+            
+            _seed = (short)Random.Range(0, short.MaxValue);
         }
 
         private void OnDisable()
@@ -47,6 +63,19 @@ namespace BingoGame
             _cancellationTokenSource.Cancel();
             _cancellationTokenSource.Dispose();
             _cancellationTokenSource = null;
+            
+            _sendButton.onClick.RemoveListener(OnSendButtonClicked);
+        }
+
+        private void OnSendButtonClicked()
+        {
+            Taptic.Light();
+            var game = new GameModel();
+            game.Seed = _seed;
+            game.EpisodeId = SupabaseService.CurrentEpisode.Id;
+            game.PlayerId = SupabaseService.Auth.CurrentUser.Id;
+            game.Matches = _gameState.Card.GetBitmask();
+            SupabaseService.SupabaseInstance.InsertNewGame(game, _cancellationTokenSource.Token).Forget(Debug.LogError);
         }
 
         private void OnRestartButtonClicked()
@@ -57,13 +86,11 @@ namespace BingoGame
             _cancellationTokenSource.Dispose();
             _cancellationTokenSource = new CancellationTokenSource();
             GameLoopAsync(_cancellationTokenSource.Token).Forget();
-            
-            var supabaseConnection = new SupabaseConnection();
-            supabaseConnection.ConnectAsync(_cancellationTokenSource.Token).Forget(Debug.LogError);
         }
 
         private async UniTaskVoid GameLoopAsync(CancellationToken token)
         {
+            _seed = (short)Random.Range(0, short.MaxValue);
             var gameState = new BingoGameState
             {
                 Card = new BingoCard()
@@ -74,8 +101,10 @@ namespace BingoGame
 
         private async UniTask ProcessGameStateAsync(BingoGameState gameState, CancellationToken token)
         {
-            gameState = _fillBingoCardCommand.Execute(gameState);
+            gameState = _fillBingoCardCommand.Execute(gameState, _seed);
             gameState = _initializeCardViewCommand.Execute(gameState);
+
+            _gameState = gameState;
 
             while (!token.IsCancellationRequested)
             {

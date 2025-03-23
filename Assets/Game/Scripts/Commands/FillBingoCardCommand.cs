@@ -7,15 +7,16 @@ namespace BingoGame.Commands
     {
         private readonly BingoCardsConfigProvider _configProvider;
 
-        private readonly Random _random = new(10);
+        private Random _random;
 
         public FillBingoCardCommand(BingoCardsConfigProvider configProvider)
         {
             _configProvider = configProvider;
         }
 
-        public BingoGameState Execute(BingoGameState gameState)
+        public BingoGameState Execute(BingoGameState gameState, int seed)
         {
+            _random = new Random(seed);
             var cardConfig = _configProvider.GetConfig();
             var randomCells = GetRandomCells(cardConfig);
             gameState.Card.Fill(randomCells);

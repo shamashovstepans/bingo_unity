@@ -1,3 +1,6 @@
+using System;
+using UnityEngine;
+
 namespace BingoGame
 {
     internal class BingoCard
@@ -29,10 +32,33 @@ namespace BingoGame
                 }
             }
         }
-        
+
         public void MarkCell(int row, int column)
         {
             checkedCells[row][column] = true;
+        }
+
+        public string GetBitmask()
+        {
+            var bitmask = String.Empty;
+            for (int i = 0; i < SIZE; i++)
+            {
+                for (int j = 0; j < SIZE; j++)
+                {
+                    if (checkedCells[i][j])
+                    {
+                        bitmask += '1';
+                    }
+                    else
+                    {
+                        bitmask += '0';
+                    }
+                }
+            }
+
+            Debug.LogError(bitmask);
+
+            return bitmask;
         }
     }
 }
