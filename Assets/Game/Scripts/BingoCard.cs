@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using Game.Scenes;
 using UnityEngine;
 
 namespace BingoGame
@@ -7,22 +9,22 @@ namespace BingoGame
     {
         public const int SIZE = 5;
 
-        public readonly string[][] cells;
+        public readonly BingoCallDto[][] cells;
         public readonly bool[][] checkedCells;
 
         public BingoCard()
         {
-            cells = new string[SIZE][];
+            cells = new BingoCallDto[SIZE][];
             checkedCells = new bool[SIZE][];
 
             for (var i = 0; i < SIZE; i++)
             {
-                cells[i] = new string[SIZE];
+                cells[i] = new BingoCallDto[SIZE];
                 checkedCells[i] = new bool[SIZE];
             }
         }
 
-        public void Fill(string[][] sourceCells)
+        public void Fill(BingoCallDto[][] sourceCells)
         {
             for (var i = 0; i < SIZE; i++)
             {
@@ -38,27 +40,21 @@ namespace BingoGame
             checkedCells[row][column] = true;
         }
 
-        public string GetBitmask()
+        public int[] GetBitmask()
         {
-            var bitmask = String.Empty;
+            var result = new List<int>();
             for (int i = 0; i < SIZE; i++)
             {
                 for (int j = 0; j < SIZE; j++)
                 {
                     if (checkedCells[i][j])
                     {
-                        bitmask += '1';
-                    }
-                    else
-                    {
-                        bitmask += '0';
+                        result.Add(cells[i][j].id);
                     }
                 }
             }
 
-            Debug.LogError(bitmask);
-
-            return bitmask;
+            return result.ToArray();
         }
     }
 }

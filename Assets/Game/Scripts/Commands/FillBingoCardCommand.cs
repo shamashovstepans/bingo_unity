@@ -1,39 +1,33 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using Game.Scenes;
 
 namespace BingoGame.Commands
 {
     internal class FillBingoCardCommand
     {
-        private readonly BingoCardsConfigProvider _configProvider;
-
         private Random _random;
-
-        public FillBingoCardCommand(BingoCardsConfigProvider configProvider)
-        {
-            _configProvider = configProvider;
-        }
-
-        public BingoGameState Execute(BingoGameState gameState, int seed)
+        
+        public BingoGameState Execute(BingoGameState gameState, BingoCallDto[] cardConfig, int seed)
         {
             _random = new Random(seed);
-            var cardConfig = _configProvider.GetConfig();
             var randomCells = GetRandomCells(cardConfig);
             gameState.Card.Fill(randomCells);
             return gameState;
         }
 
-        private string[][] GetRandomCells(BingoCardConfig cardConfig)
+        private BingoCallDto[][] GetRandomCells(BingoCallDto[] cardConfig)
         {
             // reorder elements in random way
-            var elements = cardConfig.Elements;
+            var elements = cardConfig;
 
-            var randomElements = Shuffle(elements);
+            var randomElements = Shuffle(elements.ToList());
 
-            var cells = new string[BingoCard.SIZE][];
+            var cells = new BingoCallDto[BingoCard.SIZE][];
             for (var i = 0; i < BingoCard.SIZE; i++)
             {
-                cells[i] = new string[BingoCard.SIZE];
+                cells[i] = new BingoCallDto[BingoCard.SIZE];
                 for (var j = 0; j < BingoCard.SIZE; j++)
                 {
                     cells[i][j] = randomElements[i * BingoCard.SIZE + j];
@@ -43,10 +37,10 @@ namespace BingoGame.Commands
             return cells;
         }
 
-        private List<string> Shuffle(List<string> list)
+        private List<BingoCallDto> Shuffle(List<BingoCallDto> list)
         {
-            var randomElements = new List<string>(list);
-            return Shuffle<string>(randomElements);
+            var randomElements = new List<BingoCallDto>(list);
+            return Shuffle<BingoCallDto>(randomElements);
         }
 
         private List<T> Shuffle<T>(List<T> list)

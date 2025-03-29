@@ -24,7 +24,7 @@ namespace BingoGame.Commands
                 for (var j = 0; j < BingoCard.SIZE; j++)
                 {
                     var cell = Instantiate(_cellPrefab, transform);
-                    cell.Initialize(new Vector2Int(i, j), state.Card.cells[i][j]);
+                    cell.Initialize(new Vector2Int(i, j), state.Card.cells[i][j].title);
                     cell.OnClicked += OnCellClickedHandler;
                     _cells[i][j] = cell;
                 }

@@ -4,7 +4,7 @@ namespace BingoGame.Commands
     {
         public BingoGameState Execute(BingoGameState gameState, int row, int column)
         {
-            gameState.Card.checkedCells[row][column] = true;
+            gameState.Card.checkedCells[row][column] = !gameState.Card.checkedCells[row][column];
             return gameState;
         }
     }

@@ -1,5 +1,3 @@
-using BingoGame.Services;
-using UnityEngine;
 using Zenject;
 
 namespace BingoGame
@@ -8,8 +6,6 @@ namespace BingoGame
     {
         public override void InstallBindings()
         {
-            Debug.LogError("Install called");
-            Container.BindInterfacesAndSelfTo<SupabaseService>().AsSingle().NonLazy();
         }
     }
 }
