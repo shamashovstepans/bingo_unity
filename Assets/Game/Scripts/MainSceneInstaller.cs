@@ -2,13 +2,11 @@ using BingoGame.AppNavigation;
 using BingoGame.Episodes;
 using BingoGame.Module;
 using Game.Scripts.Module;
-using UnityEngine;
 using Zenject;
 
 namespace BingoGame
 {
-    [CreateAssetMenu]
-    internal class MainSceneInstaller : ScriptableObjectInstaller<MainSceneInstaller>
+    internal class MainSceneInstaller : MonoInstaller<MainSceneInstaller>
     {
         public override void InstallBindings()
         {

@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 2013364984709196617}
   - component: {fileID: 8664520075395092698}
   m_Layer: 5
-  m_Name: episode
+  m_Name: EpisodeItem
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
