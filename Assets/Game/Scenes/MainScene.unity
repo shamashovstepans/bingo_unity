@@ -129,6 +129,7 @@ GameObject:
   - component: {fileID: 90824490}
   - component: {fileID: 90824489}
   - component: {fileID: 90824488}
+  - component: {fileID: 90824491}
   m_Layer: 0
   m_Name: EventSystem
   m_TagString: Untagged
@@ -186,6 +187,14 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!81 &90824491
+AudioListener:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 90824487}
+  m_Enabled: 1
 --- !u!4 &317585327 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 2347222168054739516, guid: 55e9f60a01b95445dbdd87faeb04014d, type: 3}
@@ -212,7 +221,6 @@ GameObject:
   m_Component:
   - component: {fileID: 496591078}
   - component: {fileID: 496591080}
-  - component: {fileID: 496591079}
   m_Layer: 0
   m_Name: Camera
   m_TagString: Untagged
@@ -235,14 +243,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 2075270457}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!81 &496591079
-AudioListener:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 496591077}
-  m_Enabled: 1
 --- !u!20 &496591080
 Camera:
   m_ObjectHideFlags: 0
@@ -304,7 +304,6 @@ GameObject:
   m_Component:
   - component: {fileID: 519420032}
   - component: {fileID: 519420031}
-  - component: {fileID: 519420029}
   m_Layer: 0
   m_Name: Camera
   m_TagString: MainCamera
@@ -312,14 +311,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!81 &519420029
-AudioListener:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 519420028}
-  m_Enabled: 1
 --- !u!20 &519420031
 Camera:
   m_ObjectHideFlags: 0
@@ -530,6 +521,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _scriptableObjectInstallers: []
   _monoInstallers:
+  - {fileID: 1712892192}
   - {fileID: 1720778523}
   _installerPrefabs: []
   _autoRun: 1
