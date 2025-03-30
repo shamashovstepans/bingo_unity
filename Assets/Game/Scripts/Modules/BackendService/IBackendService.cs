@@ -4,7 +4,7 @@ using Game.Scenes;
 
 namespace BingoGame.Module
 {
-    public interface IBingoModule
+    public interface IBackendService
     {
         UniTask LoginAsync(CancellationToken cancellationToken);
         UniTask<EpisodesResponse> GetEpisodesAsync(CancellationToken cancellationToken);

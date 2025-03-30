@@ -1,5 +1,8 @@
+using System;
+
 namespace Game.Scenes
 {
+    [Serializable]
     public class ConcludeGameRequest : Request
     {
         public string userId;

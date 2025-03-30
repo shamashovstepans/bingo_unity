@@ -43,7 +43,7 @@ namespace BingoGame
         private bool _wasSent;
 
         [Inject] private GameModel _gameModel;
-        [Inject] private IBingoModule _bingoModule;
+        [Inject] private IBackendService _backendService;
 
         private void OnEnable()
         {
@@ -133,7 +133,7 @@ namespace BingoGame
                     calls = _gameState.Card.GetBitmask()
                 };
 
-                await _bingoModule.ConcludeGameAsync(request, _cancellationTokenSource.Token);
+                await _backendService.ConcludeGameAsync(request, _cancellationTokenSource.Token);
                 Debug.Log("Successfully sent");
                 _wasSent = true;
 

@@ -5,14 +5,22 @@ using Cysharp.Threading.Tasks;
 using Newtonsoft.Json;
 using UnityEngine;
 using UnityEngine.Networking;
+using ILogger = BingoGame.Modules.Logger.ILogger;
 
 namespace Game.Scenes.HttpClient
 {
     internal class HttpClient : IHttpClient
     {
-        public UniTask<TResponse> Get<TRequest, TResponse>(string url, TRequest request, CancellationToken cancellationToken) where TResponse : Response where TRequest : Request
+        private readonly ILogger _logger;
+
+        public HttpClient(ILogger logger)
         {
-            return SendRequestAsync<TRequest, TResponse>(url, "GET", request, cancellationToken);
+            _logger = logger;
+        }
+
+        public UniTask<TResponse> Get<TResponse>(string url, CancellationToken cancellationToken) where TResponse : Response
+        {
+            return SendRequestAsync<Request, TResponse>(url, "GET", null, cancellationToken);
         }
 
         public UniTask<TResponse> Post<TRequest, TResponse>(string url, TRequest request, CancellationToken cancellationToken) where TResponse : Response where TRequest : Request
@@ -32,14 +40,12 @@ namespace Game.Scenes.HttpClient
             where TResponse : Response
             where TRequest : Request
         {
-            // Serialize the request object to JSON
-            var jsonPayload = JsonConvert.SerializeObject(request);
-            var jsonToSend = Encoding.UTF8.GetBytes(jsonPayload);
-
             using var webRequest = new UnityWebRequest(url, httpMethod);
 
-            if (httpMethod != "GET")
+            if (request != null)
             {
+                var jsonPayload = JsonConvert.SerializeObject(request);
+                var jsonToSend = Encoding.UTF8.GetBytes(jsonPayload);
                 webRequest.uploadHandler = new UploadHandlerRaw(jsonToSend);
             }
 
@@ -52,7 +58,7 @@ namespace Game.Scenes.HttpClient
             if (webRequest.result == UnityWebRequest.Result.ConnectionError ||
                 webRequest.result == UnityWebRequest.Result.ProtocolError)
             {
-                Debug.LogError($"POST Error: {webRequest.error}");
+                _logger.Error($"Request failed: {webRequest.error}");
                 throw new Exception(webRequest.error);
             }
 

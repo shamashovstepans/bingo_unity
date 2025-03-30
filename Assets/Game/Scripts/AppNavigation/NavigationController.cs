@@ -7,27 +7,31 @@ using Cysharp.Threading.Tasks;
 using Game.Scripts.Module;
 using UnityEngine;
 using Zenject;
+using ILogger = BingoGame.Modules.Logger.ILogger;
 
 namespace BingoGame.AppNavigation
 {
     internal class NavigationController : IInitializable, IDisposable
     {
         private readonly IScreenManager _screenManager;
-        private readonly IBingoModule _bingoModule;
+        private readonly IBackendService _backendService;
         private readonly EpisodesModel _episodesModel;
         private readonly GameModel _gameModel;
+        private readonly ILogger _logger;
 
         private readonly CancellationTokenSource _lifetimeTokenSource = new();
 
         public NavigationController(IScreenManager screenManager,
-            IBingoModule bingoModule,
+            IBackendService backendService,
             EpisodesModel episodesModel,
-            GameModel gameModel)
+            GameModel gameModel,
+            ILogger logger)
         {
             _screenManager = screenManager;
-            _bingoModule = bingoModule;
+            _backendService = backendService;
             _episodesModel = episodesModel;
             _gameModel = gameModel;
+            _logger = logger;
         }
 
         public void Initialize()
@@ -46,10 +50,14 @@ namespace BingoGame.AppNavigation
             try
             {
                 _screenManager.ShowScreen(ScreenType.Loading);
-                await _bingoModule.LoginAsync(_lifetimeTokenSource.Token);
-                var bingoCard = await _bingoModule.GetBingoCardAsync(_lifetimeTokenSource.Token);
-                var episodes = await _bingoModule.GetEpisodesAsync(_lifetimeTokenSource.Token);
-                _episodesModel.EpisodesResponse = episodes;
+                
+                await _backendService.LoginAsync(_lifetimeTokenSource.Token);
+                
+                var bingoCardTask = _backendService.GetBingoCardAsync(_lifetimeTokenSource.Token);
+                var episodesTask = _backendService.GetEpisodesAsync(_lifetimeTokenSource.Token);
+
+                var (bingoCard, episodesResponse) = await UniTask.WhenAll(bingoCardTask, episodesTask);
+                _episodesModel.EpisodesResponse = episodesResponse;
 
                 while (!_lifetimeTokenSource.Token.IsCancellationRequested)
                 {
@@ -75,7 +83,7 @@ namespace BingoGame.AppNavigation
             }
             catch (Exception exception)
             {
-                Debug.LogError("Game flow error: " + exception);
+                _logger.Error("Game flow failed", exception);
             }
         }
     }
