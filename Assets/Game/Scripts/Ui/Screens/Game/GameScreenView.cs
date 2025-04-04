@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using System.Threading;
 using BingoGame.Commands;
+using BingoGame.Header;
 using BingoGame.Module;
 using BingoGame.Ui;
 using Cysharp.Threading.Tasks;
@@ -9,24 +10,19 @@ using Game.Scenes;
 using Game.Scripts.Module;
 using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
 using Zenject;
+using ILogger = BingoGame.Modules.Logger.ILogger;
 using Random = UnityEngine.Random;
 
 namespace BingoGame
 {
     internal class GameScreenView : ScreenView
     {
-        [SerializeField] private BingoCardView _cardView;
-        [SerializeField] private Button _restartButton;
-        [SerializeField] private Button _backButton;
-
+        [SerializeField] private GameScreenHeaderView _headerView;
         [SerializeField] private TextMeshProUGUI _episodeText;
-
-        [SerializeField] private GameObject _blocker;
-
-        [SerializeField] private Image _sentSuccessfullyIcon;
-        [SerializeField] private Button _sendButton;
+        [SerializeField] private BingoCardView _cardView;
+        [SerializeField] private GameObject _fullScreenBlocker;
+        [SerializeField] private GameObject _gameBlocker;
 
         private FillBingoCardCommand _fillBingoCardCommand;
         private CalculateBingoCommand _calculateBingoCommand;
@@ -44,6 +40,7 @@ namespace BingoGame
 
         [Inject] private GameModel _gameModel;
         [Inject] private IBackendService _backendService;
+        [Inject] private ILogger _logger;
 
         private void OnEnable()
         {
@@ -52,63 +49,55 @@ namespace BingoGame
             _calculateBingoCommand = new CalculateBingoCommand();
             _initializeCardViewCommand = new InitializeCardViewCommand(_cardView);
             _markCellCommand = new MarkCellCommand();
-
-            _restartButton.onClick.AddListener(OnRestartButtonClicked);
-
-            _cardView.OnCellClicked += OnCellClicked;
-
+            
             GameLoopAsync(_cancellationTokenSource.Token).Forget();
 
-            _sendButton.onClick.AddListener(OnSendButtonClicked);
-            _backButton.onClick.AddListener(OnBackButtonClicked);
+            _headerView.RefreshButtonClicked += OnRestartButtonClicked;
+            _headerView.BackButtonClicked += OnBackButtonClicked;
+            _headerView.SendButtonClicked += OnSendButtonClicked;
+            _cardView.OnCellClicked += OnCellClicked;
 
             _wasSent = false;
-
-            _sentSuccessfullyIcon.gameObject.SetActive(false);
-
             _seed = (short)Random.Range(0, short.MaxValue);
+            
+            UpdateHeaderState();
         }
 
         private void Update()
         {
-            if (_gameState != null)
+            UpdateHeaderState();
+        }
+
+        private void UpdateHeaderState()
+        {
+
+            var headerState = GetHeaderState();
+            _headerView.SetState(headerState);
+            _gameBlocker.SetActive(headerState == HeaderState.Finished);
+        }
+
+        private HeaderState GetHeaderState()
+        {
+            if (_gameState == null || !_gameState.Card.checkedCells.SelectMany(x => x).Any(x => x))
             {
-                var isAnyCall = _gameState.Card.checkedCells.SelectMany(x => x).Any(x => x);
-                _backButton.gameObject.SetActive(isAnyCall);
-                _restartButton.gameObject.SetActive(!isAnyCall);
-
-                if (_wasSent)
-                {
-                    _restartButton.gameObject.SetActive(false);
-                }
-
-                if (!_wasSent)
-                {
-                    _sendButton.gameObject.SetActive(isAnyCall);
-                }
+                return HeaderState.NotStarted;
             }
 
-            if (_wasSent)
-            {
-                _sentSuccessfullyIcon.gameObject.SetActive(true);
-                _sendButton.gameObject.SetActive(false);
-            }
+            return _wasSent ? HeaderState.Finished : HeaderState.InProgress;
 
-            _blocker.gameObject.SetActive(_wasSent);
         }
 
         private void OnDisable()
         {
+            _headerView.RefreshButtonClicked -= OnRestartButtonClicked;
+            _headerView.BackButtonClicked -= OnBackButtonClicked;
+            _headerView.SendButtonClicked -= OnSendButtonClicked;
             _cardView.OnCellClicked -= OnCellClicked;
 
-            _restartButton.onClick.RemoveListener(OnRestartButtonClicked);
             _cardView.Dispose();
             _cancellationTokenSource?.Cancel();
             _cancellationTokenSource?.Dispose();
             _cancellationTokenSource = null;
-
-            _sendButton.onClick.RemoveListener(OnSendButtonClicked);
-            _backButton.onClick.RemoveListener(OnBackButtonClicked);
         }
 
         private void OnBackButtonClicked()
@@ -121,7 +110,7 @@ namespace BingoGame
         {
             try
             {
-                _sendButton.interactable = false;
+                _fullScreenBlocker.SetActive(true);
                 Taptic.Light();
 
                 var request = new ConcludeGameRequest
@@ -134,7 +123,7 @@ namespace BingoGame
                 };
 
                 await _backendService.ConcludeGameAsync(request, _cancellationTokenSource.Token);
-                Debug.Log("Successfully sent");
+                _logger.Info("Successfully sent");
                 _wasSent = true;
 
                 _cancellationTokenSource?.Cancel();
@@ -143,11 +132,11 @@ namespace BingoGame
             }
             catch (Exception e)
             {
-                Debug.LogError("Failed to send: " + e.Message);
+                _logger.Error("Failed to send game: " + e.Message);
             }
             finally
             {
-                _sendButton.interactable = true;
+                _fullScreenBlocker.SetActive(false);
             }
         }
 

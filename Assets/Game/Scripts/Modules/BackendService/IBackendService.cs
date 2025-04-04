@@ -10,5 +10,6 @@ namespace BingoGame.Module
         UniTask<EpisodesResponse> GetEpisodesAsync(CancellationToken cancellationToken);
         UniTask<BingoCardResponse> GetBingoCardAsync(CancellationToken cancellationToken);
         UniTask ConcludeGameAsync(ConcludeGameRequest request, CancellationToken cancellationToken);
+        UniTask<ChangeNameResponse> ChangeNameAsync(string newName, CancellationToken cancellationToken);
     }
 }

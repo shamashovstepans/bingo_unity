@@ -7,6 +7,7 @@ namespace BingoGame.Commands
     {
         public event Action<Vector2Int> OnCellClicked;
 
+        [SerializeField] private Transform _cellsParent;
         [SerializeField] private BingoCellView _cellPrefab;
 
         private BingoCellView[][] _cells;
@@ -23,7 +24,7 @@ namespace BingoGame.Commands
                 _cells[i] = new BingoCellView[BingoCard.SIZE];
                 for (var j = 0; j < BingoCard.SIZE; j++)
                 {
-                    var cell = Instantiate(_cellPrefab, transform);
+                    var cell = Instantiate(_cellPrefab, _cellsParent);
                     cell.Initialize(new Vector2Int(i, j), state.Card.cells[i][j].title);
                     cell.OnClicked += OnCellClickedHandler;
                     _cells[i][j] = cell;

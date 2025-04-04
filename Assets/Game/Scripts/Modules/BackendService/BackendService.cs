@@ -78,6 +78,19 @@ namespace BingoGame.Module
             return _httpClient.Post<ConcludeGameRequest, Response>(url, request, cancellationToken);
         }
 
+        public UniTask<ChangeNameResponse> ChangeNameAsync(string newName, CancellationToken cancellationToken)
+        {
+            if (string.IsNullOrEmpty(_userId))
+            {
+                throw new Exception("User is not logged in");
+            }
+
+            var request = new ChangeNameRequest(newName, _userId);
+
+            var url = GetUrl("/api/change-name");
+            return _httpClient.Post<ChangeNameRequest, ChangeNameResponse>(url, request, cancellationToken);
+        }
+
         private static string GetUrl(string endpoint)
         {
         #if PRODUCTION
