@@ -1,87 +1,34 @@
-using System.Collections.Generic;
-using System.Linq;
+using System;
 using System.Threading;
 using Cysharp.Threading.Tasks;
-using NUnit.Framework;
-using UnityEngine;
 
 namespace BingoGame.Ui.PopupManager
 {
-    internal class PopupManager : IPopupManager
+    internal class PopupManager : IPopupManager, IDisposable
     {
         private readonly PopupManagerView _popupManagerView;
+        private readonly CancellationTokenSource _lifetimeTokenSource = new();
+
+        public PopupManager(PopupManagerView popupManagerView)
+        {
+            _popupManagerView = popupManagerView;
+        }
 
         public void ShowPopup()
         {
+            ShowPopupAsync(CancellationToken.None).Forget();
         }
-    }
-    internal class PopupManagerView : MonoBehaviour
-    {
-        [SerializeField] private List<PopupView> _popupViews;
 
-        private PopupView _activePopup;
-
-        private void OnEnable()
+        public UniTask ShowPopupAsync(CancellationToken cancellationToken)
         {
-            foreach (var popupView in _popupViews)
-            {
-                popupView.Hide();
-            }
+            var token = CancellationTokenSource.CreateLinkedTokenSource(_lifetimeTokenSource.Token, cancellationToken).Token;
+            return _popupManagerView.ShowAsync(PopupType.UserProfile, token);
         }
 
-        public async UniTask ShowAsync(PopupType popupType, CancellationToken cancellationToken)
-        {
-            if (_activePopup != null)
-            {
-                throw new System.Exception("Popup is already active");
-            }
-
-            var popupView = _popupViews.First(p => p.PopupType == popupType);
-            _activePopup = popupView;
-            await popupView.ShowAsync(cancellationToken);
-        }
-
-        public void Hide()
-        {
-            if (_activePopup == null)
-            {
-                throw new System.Exception("No active popup to hide");
-            }
-
-            _activePopup.Hide();
-            _activePopup = null;
-        }
-    }
-    public abstract class PopupView : MonoBehaviour
-    {
-        public abstract PopupType PopupType { get; }
-
-        private CancellationTokenSource _lifetimeTokenSource;
-
-        private void OnEnable()
-        {
-            _lifetimeTokenSource = new CancellationTokenSource();
-        }
-
-        private void OnDisable()
+        public void Dispose()
         {
             _lifetimeTokenSource.Cancel();
             _lifetimeTokenSource.Dispose();
         }
-
-        internal void Hide()
-        {
-            gameObject.SetActive(false);
-        }
-
-        public async UniTask ShowAsync(CancellationToken cancellationToken)
-        {
-            gameObject.SetActive(true);
-            using var linkedToken = CancellationTokenSource.CreateLinkedTokenSource(_lifetimeTokenSource.Token, cancellationToken);
-            await FlowAsync(linkedToken.Token);
-            Hide();
-        }
-
-        protected abstract UniTask FlowAsync(CancellationToken cancellationToken);
     }
 }

@@ -2,20 +2,19 @@ using UnityEngine;
 
 namespace BingoGame.Ui
 {
-    public class ScreenView : MonoBehaviour
+    public abstract class ScreenView : MonoBehaviour
     {
-        [SerializeField] private ScreenType _screenType;
-        
-        public ScreenType ScreenType => _screenType;
-        
-        public void Show()
+        [SerializeField] protected Canvas _canvas;
+        public abstract ScreenType ScreenType { get; }
+
+        public void SetCamera(Camera uiCamera)
         {
-            gameObject.SetActive(true);
+            _canvas.renderMode = RenderMode.ScreenSpaceCamera;
+            _canvas.worldCamera = uiCamera;
         }
-        
-        public void Hide()
-        {
-            gameObject.SetActive(false);
-        }
+
+        public abstract void Show();
+
+        public abstract void Hide();
     }
 }

@@ -42,14 +42,16 @@ namespace BingoGame
         [Inject] private IBackendService _backendService;
         [Inject] private ILogger _logger;
 
-        private void OnEnable()
+        public override ScreenType ScreenType => ScreenType.Game;
+
+        public override void Show()
         {
             _cancellationTokenSource = new CancellationTokenSource();
             _fillBingoCardCommand = new FillBingoCardCommand();
             _calculateBingoCommand = new CalculateBingoCommand();
             _initializeCardViewCommand = new InitializeCardViewCommand(_cardView);
             _markCellCommand = new MarkCellCommand();
-            
+
             GameLoopAsync(_cancellationTokenSource.Token).Forget();
 
             _headerView.RefreshButtonClicked += OnRestartButtonClicked;
@@ -59,8 +61,21 @@ namespace BingoGame
 
             _wasSent = false;
             _seed = (short)Random.Range(0, short.MaxValue);
-            
+
             UpdateHeaderState();
+        }
+
+        public override void Hide()
+        {
+            _headerView.RefreshButtonClicked -= OnRestartButtonClicked;
+            _headerView.BackButtonClicked -= OnBackButtonClicked;
+            _headerView.SendButtonClicked -= OnSendButtonClicked;
+            _cardView.OnCellClicked -= OnCellClicked;
+
+            _cardView.Dispose();
+            _cancellationTokenSource?.Cancel();
+            _cancellationTokenSource?.Dispose();
+            _cancellationTokenSource = null;
         }
 
         private void Update()
@@ -85,19 +100,6 @@ namespace BingoGame
 
             return _wasSent ? HeaderState.Finished : HeaderState.InProgress;
 
-        }
-
-        private void OnDisable()
-        {
-            _headerView.RefreshButtonClicked -= OnRestartButtonClicked;
-            _headerView.BackButtonClicked -= OnBackButtonClicked;
-            _headerView.SendButtonClicked -= OnSendButtonClicked;
-            _cardView.OnCellClicked -= OnCellClicked;
-
-            _cardView.Dispose();
-            _cancellationTokenSource?.Cancel();
-            _cancellationTokenSource?.Dispose();
-            _cancellationTokenSource = null;
         }
 
         private void OnBackButtonClicked()

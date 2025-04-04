@@ -1,22 +1,27 @@
 using System;
 using System.Threading;
 using BingoGame.Modules.Logger;
+using BingoGame.Modules.User;
 using Cysharp.Threading.Tasks;
 using Game.Scenes;
 using Game.Scenes.HttpClient;
+using Utils.ReactiveProperty;
 using SystemInfo = UnityEngine.Device.SystemInfo;
 
 namespace BingoGame.Module
 {
-    internal class BackendService : IBackendService
+    internal class BackendService : IBackendService, IUserNameProvider
     {
         private const string DEV_URL = "http://localhost:3000";
         private const string PROD_URL = "https://bingo-server-production-4652.up.railway.app";
 
         private readonly IHttpClient _httpClient;
         private readonly ILogger _logger;
-
+        private readonly ReactiveProperty<string> _userName = new();
+        
         private string _userId;
+
+        public IReadonlyReactiveProperty<string> UserName => _userName;
 
         public BackendService(IHttpClient httpClient, ILogger logger)
         {
@@ -37,6 +42,7 @@ namespace BingoGame.Module
 
             _logger.Info("Logged in. User name: " + response.data.user_name);
             _userId = response.data.id;
+            _userName.Value = response.data.user_name;
         }
 
         public UniTask<EpisodesResponse> GetEpisodesAsync(CancellationToken cancellationToken)
@@ -78,7 +84,7 @@ namespace BingoGame.Module
             return _httpClient.Post<ConcludeGameRequest, Response>(url, request, cancellationToken);
         }
 
-        public UniTask<ChangeNameResponse> ChangeNameAsync(string newName, CancellationToken cancellationToken)
+        public async UniTask<ChangeNameResponse> ChangeNameAsync(string newName, CancellationToken cancellationToken)
         {
             if (string.IsNullOrEmpty(_userId))
             {
@@ -88,7 +94,10 @@ namespace BingoGame.Module
             var request = new ChangeNameRequest(newName, _userId);
 
             var url = GetUrl("/api/change-name");
-            return _httpClient.Post<ChangeNameRequest, ChangeNameResponse>(url, request, cancellationToken);
+            var result = await _httpClient.Post<ChangeNameRequest, ChangeNameResponse>(url, request, cancellationToken);
+            _userName.Value = result.data;
+            _logger.Info("Changed name to: " + result.data);
+            return result;
         }
 
         private static string GetUrl(string endpoint)

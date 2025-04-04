@@ -1,3 +1,4 @@
+using BingoGame.Modules.User;
 using Zenject;
 using IInstaller = BingoGame.Common.Di.IInstaller;
 
@@ -7,7 +8,7 @@ namespace BingoGame.Module
     {
         public void InstallBindings(DiContainer container)
         {
-            container.Bind<IBackendService>().To<BackendService>().AsSingle();
+            container.Bind(typeof(IBackendService), typeof(IUserNameProvider)).To<BackendService>().AsSingle();
         }
     }
 }

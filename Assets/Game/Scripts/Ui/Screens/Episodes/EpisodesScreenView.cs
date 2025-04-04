@@ -16,7 +16,9 @@ namespace BingoGame.Ui.Screens.Episodes
 
         private readonly List<EpisodeView> _episodeViews = new();
 
-        private void OnEnable()
+        public override ScreenType ScreenType => ScreenType.Episodes;
+
+        public override void Show()
         {
             foreach (var episodeDto in _episodesModel.EpisodesResponse.data)
             {
@@ -27,12 +29,7 @@ namespace BingoGame.Ui.Screens.Episodes
             }
         }
 
-        private void OnEpisodeViewClicked(EpisodeDto episodeDto)
-        {
-            _episodesModel.SelectEpisode(episodeDto);
-        }
-
-        private void OnDisable()
+        public override void Hide()
         {
             foreach (var episodeView in _episodeViews)
             {
@@ -40,6 +37,11 @@ namespace BingoGame.Ui.Screens.Episodes
                 Destroy(episodeView.gameObject);
             }
             _episodeViews.Clear();
+        }
+        
+        private void OnEpisodeViewClicked(EpisodeDto episodeDto)
+        {
+            _episodesModel.SelectEpisode(episodeDto);
         }
     }
 }

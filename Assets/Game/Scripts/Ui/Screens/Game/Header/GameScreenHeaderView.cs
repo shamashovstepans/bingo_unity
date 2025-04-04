@@ -1,6 +1,8 @@
 using System;
+using BingoGame.Ui.PopupManager;
 using UnityEngine;
 using UnityEngine.UI;
+using Zenject;
 
 namespace BingoGame.Header
 {
@@ -14,6 +16,9 @@ namespace BingoGame.Header
         [SerializeField] private Button _refreshButton;
         [SerializeField] private Button _sendButton;
         [SerializeField] private GameObject _sendSuccessfullyIcon;
+        [SerializeField] private Button _profileButton;
+
+        [Inject] private readonly IPopupManager _popupManager;
         
         private void OnEnable()
         {

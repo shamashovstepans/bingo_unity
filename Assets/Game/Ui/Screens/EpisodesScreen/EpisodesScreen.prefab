@@ -16,7 +16,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &642056330736160558
 Transform:
   m_ObjectHideFlags: 0
@@ -45,7 +45,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b3c6e5f4561a4f97aac9f6174f2e9220, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _screenType: 1
+  _canvas: {fileID: 8135106590505411141}
   _episodesContainer: {fileID: 2435619944625792767}
   _episodeViewPrefab: {fileID: 2013364984709196617, guid: 96d13694566814e04b4b570abe4a2fc7, type: 3}
 --- !u!1 &2641634546768674531

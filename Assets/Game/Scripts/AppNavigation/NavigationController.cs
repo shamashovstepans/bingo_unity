@@ -49,6 +49,7 @@ namespace BingoGame.AppNavigation
         {
             try
             {
+                
                 _screenManager.ShowScreen(ScreenType.Loading);
                 
                 await _backendService.LoginAsync(_lifetimeTokenSource.Token);
