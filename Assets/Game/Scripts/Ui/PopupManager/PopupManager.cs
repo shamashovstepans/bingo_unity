@@ -14,15 +14,15 @@ namespace BingoGame.Ui.PopupManager
             _popupManagerView = popupManagerView;
         }
 
-        public void ShowPopup()
+        public void ShowPopup(PopupType popupType)
         {
-            ShowPopupAsync(CancellationToken.None).Forget();
+            ShowPopupAsync(popupType, CancellationToken.None).Forget();
         }
 
-        public UniTask ShowPopupAsync(CancellationToken cancellationToken)
+        public UniTask ShowPopupAsync(PopupType popupType, CancellationToken cancellationToken)
         {
             var token = CancellationTokenSource.CreateLinkedTokenSource(_lifetimeTokenSource.Token, cancellationToken).Token;
-            return _popupManagerView.ShowAsync(PopupType.UserProfile, token);
+            return _popupManagerView.ShowAsync(popupType, token);
         }
 
         public void Dispose()

@@ -5,7 +5,7 @@ namespace BingoGame.Ui.PopupManager
 {
     public interface IPopupManager
     {
-        void ShowPopup();
-        UniTask ShowPopupAsync(CancellationToken cancellationToken);
+        void ShowPopup(PopupType popupType);
+        UniTask ShowPopupAsync(PopupType popupType,CancellationToken cancellationToken);
     }
 }

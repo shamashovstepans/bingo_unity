@@ -93,9 +93,9 @@ namespace BingoGame.Module
 
             var request = new ChangeNameRequest(newName, _userId);
 
-            var url = GetUrl("/api/change-name");
+            var url = GetUrl("/api/user/change-name");
             var result = await _httpClient.Post<ChangeNameRequest, ChangeNameResponse>(url, request, cancellationToken);
-            _userName.Value = result.data;
+            _userName.Value = result.data.user_name;
             _logger.Info("Changed name to: " + result.data);
             return result;
         }

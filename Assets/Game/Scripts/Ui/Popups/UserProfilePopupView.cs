@@ -1,5 +1,6 @@
 using System.Threading;
 using BingoGame.Common;
+using BingoGame.Ui.Common;
 using BingoGame.Ui.PopupManager;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
@@ -11,6 +12,7 @@ namespace BingoGame.Ui.Popups
     {
         [SerializeField] private Button _closeButton;
         [SerializeField] private Button _changeNameButton;
+        [SerializeField] private ConfirmationPromptView _confirmationPromptView;
         
         private UniTaskWithCancellationToken<object> _closeButtonClickedTcs;
         
@@ -44,7 +46,7 @@ namespace BingoGame.Ui.Popups
         
         private void OnChangeNameButtonClicked()
         {
-            // Handle change name logic here
+            _confirmationPromptView.gameObject.SetActive(true);
         }
     }
 }

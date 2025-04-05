@@ -25,6 +25,7 @@ namespace BingoGame.Header
             _backButton.onClick.AddListener(OnBackButtonClicked);
             _refreshButton.onClick.AddListener(OnRefreshButtonClicked);
             _sendButton.onClick.AddListener(OnSendButtonClicked);
+            _profileButton.onClick.AddListener(OnProfileButtonClicked);
         }
         
         private void OnDisable()
@@ -32,6 +33,7 @@ namespace BingoGame.Header
             _backButton.onClick.RemoveListener(OnBackButtonClicked);
             _refreshButton.onClick.RemoveListener(OnRefreshButtonClicked);
             _sendButton.onClick.RemoveListener(OnSendButtonClicked);
+            _profileButton.onClick.RemoveListener(OnProfileButtonClicked);
         }
         
         private void OnBackButtonClicked()
@@ -48,6 +50,11 @@ namespace BingoGame.Header
         {
             SendButtonClicked?.Invoke();
         }
+        
+        private void OnProfileButtonClicked()
+        {
+            _popupManager.ShowPopup(PopupType.UserProfile);
+        }
 
         public void SetState(HeaderState state)
         {
@@ -55,7 +62,7 @@ namespace BingoGame.Header
             {
                 case HeaderState.NotStarted:
                     _backButton.gameObject.SetActive(true);
-                    _refreshButton.gameObject.SetActive(false);
+                    _refreshButton.gameObject.SetActive(true);
                     _sendButton.gameObject.SetActive(false);
                     _sendSuccessfullyIcon.SetActive(false);
                     break;

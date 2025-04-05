@@ -5,6 +5,6 @@ namespace Game.Scenes
     [Serializable]
     public class ChangeNameResponse : Response
     {
-        public string data;
+        public LoginDto data;
     }
 }

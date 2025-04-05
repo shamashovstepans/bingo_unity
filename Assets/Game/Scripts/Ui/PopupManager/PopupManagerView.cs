@@ -30,6 +30,7 @@ namespace BingoGame.Ui.PopupManager
             var popupView = _popupViews.First(p => p.PopupType == popupType);
             _activePopup = popupView;
             await popupView.ShowAsync(cancellationToken);
+            Hide();
         }
 
         public void Hide()

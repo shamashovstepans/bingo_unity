@@ -5,13 +5,13 @@ namespace Game.Scenes
     [Serializable]
     internal class ChangeNameRequest : Request
     {
-        public string user_name;
-        public string udid;
+        public string newName;
+        public string userId;
 
-        public ChangeNameRequest(string userName, string udid)
+        public ChangeNameRequest(string newName, string userId)
         {
-            this.user_name = userName;
-            this.udid = udid;
+            this.newName = newName;
+            this.userId = userId;
         }
     }
 }
