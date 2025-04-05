@@ -8,8 +8,11 @@ namespace BingoGame.Ui
     {
         [SerializeField] private Transform _parentTransform;
         [SerializeField] private List<ScreenView> _screenViewPrefabs;
+        [SerializeField] private Camera _screenCamera;
         
         private ScreenView _activeScreen;
+        
+        [Inject] private readonly IInstantiator _instantiator;
 
         public void ShowScreen(ScreenType screenType)
         {
@@ -17,18 +20,17 @@ namespace BingoGame.Ui
             {
                 _activeScreen.Hide();
                 _activeScreen.gameObject.SetActive(false);
-                // Destroy(_activeScreen.gameObject);
+                Destroy(_activeScreen.gameObject);
             }
             
             foreach (var screenPrefab in _screenViewPrefabs)
             {
                 if (screenPrefab.ScreenType == screenType)
                 {
-                    // var screen = Instantiate(screenPrefab, _parentTransform);
-                    screenPrefab.SetCamera(Camera.main);
-                    _activeScreen = screenPrefab;
-                    screenPrefab.gameObject.SetActive(true);
-                    screenPrefab.Show();
+                    var screen = _instantiator.InstantiatePrefabForComponent<ScreenView>(screenPrefab, _parentTransform);
+                    screen.SetCanvasCamera(_screenCamera);
+                    _activeScreen = screen;
+                    screen.Show();
                 }
             }
         }

@@ -1,39 +1,45 @@
+using System;
 using System.Threading;
+using BingoGame.Ui.Common;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
 
 namespace BingoGame.Ui.PopupManager
 {
-    public abstract class PopupView : MonoBehaviour
+    public abstract class PopupView : MonoBehaviour, ICanvasHolder
     {
+        [SerializeField] private Canvas _canvas;
         public abstract PopupType PopupType { get; }
 
         private CancellationTokenSource _lifetimeTokenSource;
 
-        protected virtual void OnEnable()
+        public void SetCanvasCamera(Camera uiCamera)
         {
-            _lifetimeTokenSource = new CancellationTokenSource();
-        }
-
-        protected virtual void OnDisable()
-        {
-            _lifetimeTokenSource.Cancel();
-            _lifetimeTokenSource.Dispose();
-        }
-
-        internal void Hide()
-        {
-            gameObject.SetActive(false);
+            _canvas.renderMode = RenderMode.ScreenSpaceCamera;
+            _canvas.worldCamera = uiCamera;
         }
 
         public async UniTask ShowAsync(CancellationToken cancellationToken)
         {
-            gameObject.SetActive(true);
+            _lifetimeTokenSource = new CancellationTokenSource();
             using var linkedToken = CancellationTokenSource.CreateLinkedTokenSource(_lifetimeTokenSource.Token, cancellationToken);
-            await FlowAsync(linkedToken.Token);
-            Hide();
+
+            try
+            {
+                OnStart();
+                await OnFlowAsync(linkedToken.Token);
+            }
+            finally
+            {
+                OnStop();
+            }
+
+            _lifetimeTokenSource.Cancel();
+            _lifetimeTokenSource.Dispose();
         }
 
-        protected abstract UniTask FlowAsync(CancellationToken cancellationToken);
+        protected abstract void OnStart();
+        protected abstract UniTask OnFlowAsync(CancellationToken cancellationToken);
+        protected abstract void OnStop();
     }
 }

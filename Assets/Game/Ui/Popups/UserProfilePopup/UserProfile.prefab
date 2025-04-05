@@ -1522,6 +1522,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 64e7936152e54c8cb1ef0b286df043e7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _canvas: {fileID: 4130093718974712637}
   _closeButton: {fileID: 9047589224755692991}
   _changeNameButton: {fileID: 2962974343786075099}
   _confirmationPromptView: {fileID: 2470655417316416237}

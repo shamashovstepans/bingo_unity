@@ -1,13 +1,14 @@
+using BingoGame.Ui.Common;
 using UnityEngine;
 
 namespace BingoGame.Ui
 {
-    public abstract class ScreenView : MonoBehaviour
+    public abstract class ScreenView : MonoBehaviour, ICanvasHolder
     {
-        [SerializeField] protected Canvas _canvas;
+        [SerializeField] private Canvas _canvas;
         public abstract ScreenType ScreenType { get; }
 
-        public void SetCamera(Camera uiCamera)
+        public void SetCanvasCamera(Camera uiCamera)
         {
             _canvas.renderMode = RenderMode.ScreenSpaceCamera;
             _canvas.worldCamera = uiCamera;
