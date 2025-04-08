@@ -6,12 +6,10 @@ namespace Game.Scenes
     internal class ChangeNameRequest : Request
     {
         public string newName;
-        public string userId;
 
-        public ChangeNameRequest(string newName, string userId)
+        public ChangeNameRequest(string newName)
         {
             this.newName = newName;
-            this.userId = userId;
         }
     }
 }

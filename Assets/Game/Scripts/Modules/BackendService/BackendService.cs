@@ -65,7 +65,7 @@ namespace BingoGame.Module
             }
 
             var request = new Request();
-            var url = GetUrl("/api/bingo-card");
+            var url = GetUrl("/api/bingo-cards");
 
             return await _httpClient.Get<BingoCardResponse>(url, cancellationToken);
         }
@@ -91,11 +91,11 @@ namespace BingoGame.Module
                 throw new Exception("User is not logged in");
             }
 
-            var request = new ChangeNameRequest(newName, _userId);
+            var request = new ChangeNameRequest(newName);
 
-            var url = GetUrl("/api/user/change-name");
+            var url = GetUrl($"/api/user/change-name/{_userId}");
             var result = await _httpClient.Post<ChangeNameRequest, ChangeNameResponse>(url, request, cancellationToken);
-            _userName.Value = result.data.user_name;
+            _userName.Value = result.data;
             _logger.Info("Changed name to: " + result.data);
             return result;
         }
