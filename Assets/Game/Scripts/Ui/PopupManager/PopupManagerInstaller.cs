@@ -9,6 +9,7 @@ namespace BingoGame.Ui.PopupManager
         
         public override void InstallBindings()
         {
+            Application.targetFrameRate = 60;
             Container.BindInstance(_popupManagerView).AsSingle();
             Container.BindInterfacesTo<PopupManager>().AsSingle().NonLazy();
         }

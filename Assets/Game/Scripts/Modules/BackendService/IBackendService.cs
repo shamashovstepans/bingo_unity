@@ -6,6 +6,7 @@ namespace BingoGame.Module
 {
     public interface IBackendService
     {
+        void SetUdid(string udid);
         UniTask LoginAsync(CancellationToken cancellationToken);
         UniTask<EpisodesResponse> GetEpisodesAsync(CancellationToken cancellationToken);
         UniTask<BingoCardResponse> GetBingoCardAsync(CancellationToken cancellationToken);

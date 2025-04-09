@@ -1,11 +1,12 @@
 using System;
 using System.Threading;
-using BingoGame.Modules.Logger;
 using BingoGame.Modules.User;
 using Cysharp.Threading.Tasks;
 using Game.Scenes;
 using Game.Scenes.HttpClient;
+using UnityEngine;
 using Utils.ReactiveProperty;
+using ILogger = BingoGame.Modules.Logger.ILogger;
 using SystemInfo = UnityEngine.Device.SystemInfo;
 
 namespace BingoGame.Module
@@ -29,11 +30,22 @@ namespace BingoGame.Module
             _logger = logger;
         }
 
+        public void SetUdid(string udid)
+        {
+            if (string.IsNullOrEmpty(udid))
+            {
+                throw new ArgumentException("UDID cannot be null or empty");
+            }
+
+            PlayerPrefs.SetString("my_unique_device_id", udid);
+            PlayerPrefs.Save();
+        }
+
         public async UniTask LoginAsync(CancellationToken cancellationToken)
         {
             var request = new LoginRequest
             {
-                udid = SystemInfo.deviceUniqueIdentifier
+                udid = GetOrCreatePersistentDeviceId()
             };
 
             var url = GetUrl("/api/login");
@@ -43,6 +55,19 @@ namespace BingoGame.Module
             _logger.Info("Logged in. User name: " + response.data.user_name);
             _userId = response.data.id;
             _userName.Value = response.data.user_name;
+        }
+        
+        public static string GetOrCreatePersistentDeviceId()
+        {
+            const string key = "my_unique_device_id";
+
+            if (PlayerPrefs.HasKey(key))
+                return PlayerPrefs.GetString(key);
+
+            var newId = SystemInfo.deviceUniqueIdentifier;
+            PlayerPrefs.SetString(key, newId);
+            PlayerPrefs.Save();
+            return newId;
         }
 
         public UniTask<EpisodesResponse> GetEpisodesAsync(CancellationToken cancellationToken)
